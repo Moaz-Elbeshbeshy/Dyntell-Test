@@ -3,14 +3,14 @@ from models.models import db, Task
 
 def get_all_tasks():
     tasks = Task.query.all()
-    return [task.to_dict() for task in tasks if task is not None], 200
+    return {"tasks": [task.to_dict() for task in tasks if task is not None]}, 200
 
 
 def get_task_by_id(id):
     task = Task.query.get(id)
     if not task:
         return {"error": "Task not found"}, 404
-    return task.to_dict(), 200
+    return {"task": task.to_dict()}, 200
 
 
 def create_task(title, status="pending"):

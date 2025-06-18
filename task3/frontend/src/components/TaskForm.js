@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { API_BASE } from "../config";
 
 function TaskForm() {
   const [title, setTitle] = useState("");
@@ -8,7 +9,7 @@ function TaskForm() {
     if (!title.trim()) return;
 
     try {
-      const response = await fetch("http://localhost:5000/api/v1/tasks", {
+      const response = await fetch(API_BASE, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title }),

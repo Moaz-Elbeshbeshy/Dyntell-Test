@@ -1,9 +1,10 @@
 import React from "react";
+import { API_BASE } from "../config";
 
 function TaskItem({ task, onUpdate, onDelete }) {
   const handleStatusChange = async () => {
     try {
-      await fetch(`http://localhost:5000/api/tasks/${task.id}`, {
+      await fetch(`${API_BASE}${task.id}/`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: task.status === "pending" ? "completed" : "pending" }),
@@ -16,7 +17,7 @@ function TaskItem({ task, onUpdate, onDelete }) {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:5000/api/tasks/${task.id}`, {
+      await fetch(`${API_BASE}${task.id}/`, {
         method: "DELETE",
       });
       onDelete();
