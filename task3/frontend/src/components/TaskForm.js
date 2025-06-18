@@ -20,8 +20,12 @@ function TaskForm({ onTaskAdded }) {
         console.error("Server error:", errorData);
         return;
       }
-      setTitle("");
-      onTaskAdded();
+
+      if (response.status === 201) {
+        setTitle("");
+        onTaskAdded();
+        window.location.reload();
+      }
     } catch (error) {
       console.error("Error adding task:", error);
     }

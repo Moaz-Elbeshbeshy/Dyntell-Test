@@ -40,7 +40,7 @@ def update_task_route(id):
     return jsonify(task), status_code
 
 
-@tasks_bp.route("/<int:id>/", methods=["DELETE"])
+@tasks_bp.route("/<int:id>", methods=["DELETE"])
 def delete_task_route(id):
     status_code = delete_task(id)
     return jsonify({"message": "Task deleted"}), status_code

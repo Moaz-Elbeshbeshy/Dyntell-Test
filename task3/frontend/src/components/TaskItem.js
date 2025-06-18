@@ -9,7 +9,7 @@ function TaskItem({ task, onUpdate, onDelete }) {
   const handleStatusChange = async () => {
     const newStatus = task.status === "pending" ? "completed" : "pending";
     try {
-      const response = await fetch(`${API_BASE}${task.id}/`, {
+      const response = await fetch(`${API_BASE}${task.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: task.title, status: newStatus }),
@@ -33,7 +33,7 @@ function TaskItem({ task, onUpdate, onDelete }) {
       return;
     }
     try {
-      const response = await fetch(`${API_BASE}${task.id}/`, {
+      const response = await fetch(`${API_BASE}${task.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: editTitle, status: editStatus }),
@@ -52,7 +52,7 @@ function TaskItem({ task, onUpdate, onDelete }) {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`${API_BASE}${task.id}/`, {
+      const response = await fetch(`${API_BASE}${task.id}`, {
         method: "DELETE",
       });
 

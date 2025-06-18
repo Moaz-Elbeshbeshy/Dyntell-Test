@@ -35,6 +35,7 @@ def update_task(id, title, status):
     if status and status not in Task.ALLOWED_STATUSES:
         return {"error": f"Status must be one of {list(Task.ALLOWED_STATUSES)}"}, 400
     task.title = title
+    task.status = status if status else task.status
     db.session.commit()
     return task.to_dict(), 200
 
