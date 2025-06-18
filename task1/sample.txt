@@ -1,0 +1,4 @@
+Python is great, and Python is easy to learn.
+The Python developer test is fun and challenging.
+Learning Python can be fun, productive, and rewarding.
+Fun fact: Python was named after Monty Python!
