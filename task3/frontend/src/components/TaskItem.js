@@ -80,7 +80,7 @@ function TaskItem({ task, onUpdate, onDelete }) {
           />
           <select value={editStatus} onChange={e => setEditStatus(e.target.value)} className="p-2 border rounded-md">
             <option value="pending">Pending</option>
-            <option value="done">Done</option>
+            <option value="completed">Completed</option>
           </select>
           <div className="flex gap-2">
             <button
@@ -100,11 +100,11 @@ function TaskItem({ task, onUpdate, onDelete }) {
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
-              checked={task.status === "done"}
+              checked={task.status === "completed"}
               onChange={handleStatusChange}
               className="h-5 w-5 text-blue-500 rounded"
             />
-            <span className={task.status === "done" ? "line-through text-gray-500" : ""}>
+            <span className={task.status === "completed" ? "line-through text-gray-500" : ""}>
               {task.title} ({task.status})
             </span>
           </div>

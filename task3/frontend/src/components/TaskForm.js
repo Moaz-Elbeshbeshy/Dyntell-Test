@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { API_BASE } from "../config";
 
-function TaskForm() {
+function TaskForm({ onTaskAdded }) {
   const [title, setTitle] = useState("");
 
   const handleSubmit = async e => {
@@ -12,12 +12,16 @@ function TaskForm() {
       const response = await fetch(API_BASE, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title }),
+        body: JSON.stringify({ title, status: "pending" }),
       });
-      if (response.ok) {
-        setTitle("");
-        window.location.reload(); // Refresh task list
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Server error:", errorData);
+        return;
       }
+      setTitle("");
+      onTaskAdded();
     } catch (error) {
       console.error("Error adding task:", error);
     }

@@ -6,7 +6,7 @@ db = SQLAlchemy()
 
 class Task(db.Model):
 
-    ALLOWED_STATUSES = ["pending", "done", "cancelled"]
+    ALLOWED_STATUSES = ["pending", "completed", "cancelled"]
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
