@@ -1,5 +1,6 @@
 import pandas as pd
 
+# Read the JSON file into a DataFrame
 df = pd.read_json('people.json')
 
 # Keep only people aged 30 or younger
