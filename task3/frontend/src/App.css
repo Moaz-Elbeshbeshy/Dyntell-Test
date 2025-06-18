@@ -1,0 +1,8 @@
+/* Custom styles if needed */
+.task-item {
+  transition: background-color 0.2s;
+}
+
+.task-item:hover {
+  background-color: #f9fafb;
+}
