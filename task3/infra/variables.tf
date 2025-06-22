@@ -24,3 +24,8 @@ variable "credentials_file" {
 variable "machine_type" {
   default = "e2-micro"
 }
+
+variable "ssh_public_key_path" {
+  description = "Path to SSH public key"
+  default     = "/home/moazelbeshbeshy/.ssh/google_compute_engine.pub"
+}
