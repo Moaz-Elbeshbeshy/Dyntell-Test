@@ -1,0 +1,76 @@
+pipeline {
+    agent any
+
+    environment {
+        GCP_PROJECT_ID = 'your-gcp-project-id'       // <-- Change this!
+        IMAGE_NAME = "gcr.io/${GCP_PROJECT_ID}/task-manager-backend"
+        TAG = 'latest'
+        GCP_VM_SSH = 'your-gcp-vm-user@your-vm-ip'  // <-- Change this!
+        SSH_KEY_PATH = '/path/to/your/private/key'  // <-- Change this!
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                dir('frontend') {
+                    sh 'npm ci'
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Build Backend Docker Image') {
+            steps {
+                dir('backend') {
+                    sh """
+                    docker build -t ${IMAGE_NAME}:${TAG} .
+                    """
+                }
+            }
+        }
+
+        stage('Authenticate with GCP') {
+            steps {
+                // Assuming gcloud and service account JSON at /tmp/gcloud-key.json
+                sh """
+                gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
+                gcloud config set project ${GCP_PROJECT_ID}
+                gcloud auth configure-docker --quiet
+                """
+            }
+        }
+
+        stage('Push Docker Image to GCP') {
+            steps {
+                sh "docker push ${IMAGE_NAME}:${TAG}"
+            }
+        }
+
+        stage('Deploy on GCP VM') {
+            steps {
+                sh """
+                ssh -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no ${GCP_VM_SSH} \\
+                'docker pull ${IMAGE_NAME}:${TAG} && \\
+                docker stop task-manager || true && \\
+                docker rm task-manager || true && \\
+                docker run -d --name task-manager -p 5000:5000 ${IMAGE_NAME}:${TAG}'
+                """
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment succeeded!'
+        }
+        failure {
+            echo 'Deployment failed.'
+        }
+    }
+}
