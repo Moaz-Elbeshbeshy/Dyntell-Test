@@ -34,7 +34,9 @@ resource "google_compute_instance" "vm" {
     #!/bin/bash
     sudo apt-get update
     sudo apt-get install -y docker.io
-    sudo usermod -aG docker $USER
+    sudo systemctl start docker
+    sudo systemctl enable docker
+    sudo usermod -aG docker moazelbeshbeshy
   EOT
 }
 

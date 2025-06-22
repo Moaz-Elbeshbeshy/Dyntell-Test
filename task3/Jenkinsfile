@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        GCP_PROJECT_ID = 'm06308803865'       // <-- Change this!
+        GCP_PROJECT_ID = 'm06308803865'
         IMAGE_NAME = "gcr.io/${GCP_PROJECT_ID}/task-manager-backend"
         TAG = 'latest'
-        GCP_VM_SSH = 'your-gcp-vm-user@your-vm-ip'  // <-- Change this!
-        SSH_KEY_PATH = '/home/jenkins/.ssh/gcp-key.pem'  // <-- Change this!
+        GCP_VM_SSH = 'moazelbeshbeshy@34.133.153.49'
+        SSH_KEY_PATH = '/home/jenkins/.ssh/gcp-key.pem'
     }
 
     stages {

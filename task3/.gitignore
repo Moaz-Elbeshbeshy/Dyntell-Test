@@ -16,3 +16,6 @@ override.tf.json
 # Sensitive variable files
 *.tfvars
 *.tfvars.json
+
+**/__pycache__/
+*.pyc
