@@ -33,6 +33,8 @@ services:
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./gcp-key.json:/tmp/gcloud-key.json:ro
+      - /home/moazelbeshbeshy/.ssh/google_compute_engine:/home/jenkins/.ssh/gcp-key.pem:ro
     restart: unless-stopped
 
 volumes:

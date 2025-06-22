@@ -26,6 +26,10 @@ resource "google_compute_instance" "vm" {
         }
   }
 
+  metadata = {
+  ssh-keys = "moazelbeshbeshy:${file("/home/moazelbeshbeshy/.ssh/google_compute_engine.pub")}"
+    }
+
   metadata_startup_script = <<-EOT
     #!/bin/bash
     sudo apt-get update
