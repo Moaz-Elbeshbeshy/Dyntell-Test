@@ -1,31 +1,27 @@
-variable "project_id" {
-    type        = string
-    description = "GCP task-manager ID"
+variable "project" {
+  description = "Project"
+  default     = "m06308803865"
 }
 
 variable "region" {
-    type    =  string
-    default = "us-central1"
+  description = "Region"
+  default     = "europe-central2"
 }
 
 variable "zone" {
-    type      = string
-    default   = "us-central1-a"
+  description = "Zone"
+  default     = "europe-central2-a"
 }
 
-variable "vm_name" {
-  default = "task-manager-vm"
-}
 
-variable "credentials_file" {
-  type = string
-}
-
-variable "machine_type" {
-  default = "e2-micro"
-}
 
 variable "ssh_public_key_path" {
   description = "Path to SSH public key"
   default     = "/home/moazelbeshbeshy/.ssh/google_compute_engine.pub"
+}
+
+
+variable "credentials" {
+  description = "My Credentials"
+  default     = "/mnt/f/the_dev/python_test_dyntell/task3/gcp-key.json"
 }
