@@ -21,7 +21,7 @@ ENV FLASK_RUN_PORT=5000
 ENV FLASK_ENV=development
 
 # Expose port
-EXPOSE 5000
+EXPOSE 3000
 
 # Run Flask
 CMD ["flask", "run"]
