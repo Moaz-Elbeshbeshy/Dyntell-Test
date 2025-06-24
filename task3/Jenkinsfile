@@ -69,20 +69,18 @@ pipeline {
 
         stage('Deploy on GCP VM') {
             steps {
-                sh """
-                ssh -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no ${GCP_VM_SSH} << 'EOF'
-                    # Clone the repo into a clean directory ~/project
-                    if [ ! -d ~/project ]; then
-                        git clone https://github.com/Moaz-Elbeshbeshy/Dyntell-Test.git ~/project
-                    else
-                        cd ~/project && git pull
-                    fi
-
-                    # Make sure deploy.sh is executable and run it
-                    chmod +x ~/project/task3/deploy/deploy.sh
-                    ~/project/task3/deploy/deploy.sh
-                EOF
-                """
+                withCredentials([file(credentialsId: 'gcp-ssh-key', variable: 'SSH_KEY')]) {
+                    sh '''
+                        chmod 600 $SSH_KEY
+                        ssh -i $SSH_KEY -o StrictHostKeyChecking=no moazelbeshbeshy@34.116.160.135 << 'EOF'
+                        echo ✅ Connected to GCP VM
+                        # You can add deployment commands here, like:
+                        # docker pull gcr.io/m06308803865/task-manager-frontend:latest
+                        # docker stop frontend || true && docker rm frontend || true
+                        # docker run -d --name frontend -p 80:80 gcr.io/m06308803865/task-manager-frontend:latest
+                        EOF
+                    '''
+                }
             }
         }
     }
