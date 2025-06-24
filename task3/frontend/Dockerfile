@@ -1,18 +1,24 @@
-# Use Node.js official image
-FROM node:22-slim
-
-# Set working directory
-WORKDIR /app
-
-# Copy package.json and install dependencies
-COPY package*.json ./
-RUN npm install
-
-# Copy the frontend folder to app/
-COPY . .
-
-# Expose the port your frontend runs on
-EXPOSE 3000
-
-# Start the app
-CMD ["npm", "start"]
+# ---------- Build Stage ----------
+    FROM node:22 as build
+    WORKDIR /app
+    
+    # Copy package files first (better caching)
+    COPY frontend/package*.json ./
+    
+    # Install dependencies
+    RUN npm ci
+    
+    # Copy rest of the frontend code and build
+    COPY . .
+    RUN npm run build
+    
+    # ---------- Production Stage ----------
+    FROM nginx:alpine
+    COPY --from=build /app/build /usr/share/nginx/html
+    
+    # Expose default nginx port
+    EXPOSE 80
+    
+    # Run nginx
+    CMD ["nginx", "-g", "daemon off;"]
+    
