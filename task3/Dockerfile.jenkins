@@ -1,0 +1,9 @@
+FROM jenkins/jenkins:lts
+
+USER root
+
+# Create docker group with same GID as host (1001) and add jenkins user to it
+RUN groupadd -g 1001 docker && \
+    usermod -aG docker jenkins
+
+USER jenkins
