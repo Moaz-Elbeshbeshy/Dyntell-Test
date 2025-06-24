@@ -70,7 +70,7 @@ pipeline {
         stage('Deploy on GCP VM') {
             steps {
                 withCredentials([file(credentialsId: 'gcp-ssh-key', variable: 'SSH_KEY')]) {
-                    sh '''
+                    sh """
                         chmod 600 $SSH_KEY
                         ssh -i $SSH_KEY -o StrictHostKeyChecking=no moazelbeshbeshy@34.116.160.135 << 'EOF'
                         echo ✅ Connected to GCP VM
@@ -79,7 +79,7 @@ pipeline {
                         # docker stop frontend || true && docker rm frontend || true
                         # docker run -d --name frontend -p 80:80 gcr.io/m06308803865/task-manager-frontend:latest
                         EOF
-                    '''
+                    """
                 }
             }
         }
