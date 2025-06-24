@@ -3,7 +3,7 @@
     WORKDIR /app
     
     # Copy package files first (better caching)
-    COPY frontend/package*.json ./
+    COPY ./package*.json ./
     
     # Install dependencies
     RUN npm ci
