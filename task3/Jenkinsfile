@@ -72,13 +72,17 @@ pipeline {
                 withCredentials([file(credentialsId: 'gcp-ssh-key', variable: 'SSH_KEY')]) {
                     sh """
                         chmod 600 \$SSH_KEY
-                        ssh-keygen -lf \$SSH_KEY
-                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no moazelbeshbeshy@34.116.160.135 ' \
-                        echo "✅ Connected to GCP VM" && \
-                        docker pull gcr.io/m06308803865/task-manager-frontend:latest && \
-                        docker stop frontend || true && \
-                        docker rm frontend || true && \
-                        docker run -d --name frontend -p 80:80 gcr.io/m06308803865/task-manager-frontend:latest \
+                            ssh-keygen -lf \$SSH_KEY
+                            ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${GCP_VM_SSH} ' \
+                            echo "✅ Connected to GCP VM" && \
+                            docker pull ${FRONTEND_IMAGE}:${TAG} && \
+                            docker stop frontend || true && \
+                            docker rm frontend || true && \
+                            docker run -d --name frontend -p 80:80 ${FRONTEND_IMAGE}:${TAG} && \
+                            docker pull ${BACKEND_IMAGE}:${TAG} && \
+                            docker stop backend || true && \
+                            docker rm backend || true && \
+                            docker run -d --name backend -p 3000:3000 ${BACKEND_IMAGE}:${TAG} \
                         '
                     """
                 }
