@@ -24,4 +24,4 @@ ENV FLASK_ENV=development
 EXPOSE 3000
 
 # Run Flask
-CMD ["flask", "run"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=3000"]
