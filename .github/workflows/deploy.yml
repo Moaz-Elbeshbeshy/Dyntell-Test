@@ -62,8 +62,8 @@ jobs:
           script: |
             sudo systemctl restart k3s || true
 
-            kubectl apply -f ~/task3/k8s/backend-deployment.yml
-            kubectl apply -f ~/task3/k8s/frontend-deployment.yml
+            /usr/local/bin/k3s kubectl apply -f ~/task3/k8s/backend-deployment.yml
+            /usr/local/bin/k3s kubectl apply -f ~/task3/k8s/frontend-deployment.yml
 
-            kubectl rollout status deployment/backend
-            kubectl rollout status deployment/frontend
+            /usr/local/bin/k3s kubectl rollout status deployment/backend
+            /usr/local/bin/k3s kubectl rollout status deployment/frontend
