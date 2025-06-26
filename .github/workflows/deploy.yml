@@ -45,6 +45,14 @@ jobs:
           docker build -t $IMAGE_FRONTEND:latest ./task3/frontend
           docker push $IMAGE_FRONTEND:latest
 
+      - name: Ensure k8s_manifests folder exists
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: mkdir -p ~/task3/k8s_manifests
+
       - name: Copy Kubernetes manifests to EC2
         uses: appleboy/scp-action@v0.1.5
         with:
