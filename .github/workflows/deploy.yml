@@ -45,6 +45,14 @@ jobs:
           docker build -t $IMAGE_FRONTEND:latest ./task3/frontend
           docker push $IMAGE_FRONTEND:latest
 
+      - name: Copy Kubernetes manifests to EC2
+        uses: appleboy/scp-action@v0.1.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "task3/k8s_manifests/*"
+          target: "~/task3/k8s_manifests/"
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.8
         with:
@@ -52,13 +60,10 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull ${{ env.IMAGE_BACKEND }}:latest
-            docker pull ${{ env.IMAGE_FRONTEND }}:latest
+            sudo systemctl restart k3s || true
 
-            docker stop backend || true
-            docker rm backend || true
-            docker run -d -p 3000:3000 --name backend ${{ env.IMAGE_BACKEND }}:latest
+            kubectl apply -f ~/task3/k8s/backend-deployment.yml
+            kubectl apply -f ~/task3/k8s/frontend-deployment.yml
 
-            docker stop frontend || true
-            docker rm frontend || true
-            docker run -d -p 80:80 --name frontend ${{ env.IMAGE_FRONTEND }}:latest
+            kubectl rollout status deployment/backend
+            kubectl rollout status deployment/frontend
