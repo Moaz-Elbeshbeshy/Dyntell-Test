@@ -1,0 +1,64 @@
+name: Build & Push Docker Images to GHCR
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "task3/backend/**"
+      - "task3/frontend/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_BACKEND: ghcr.io/moaz-elbeshbeshy/task-manager-backend
+  IMAGE_FRONTEND: ghcr.io/moaz-elbeshbeshy/task-manager-frontend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Authenticate to GHCR
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build & push backend image
+      - name: Build and push backend image
+        run: |
+          docker build -t $IMAGE_BACKEND:latest ./backend
+          docker push $IMAGE_BACKEND:latest
+
+      # Build & push frontend image
+      - name: Build and push frontend image
+        run: |
+          docker build -t $IMAGE_FRONTEND:latest ./frontend
+          docker push $IMAGE_FRONTEND:latest
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull $IMAGE_BACKEND:latest
+            docker pull $IMAGE_FRONTEND:latest
+
+            docker stop backend || true
+            docker rm backend || true
+            docker run -d -p 3000:3000 --name backend $IMAGE_BACKEND:latest
+
+            docker stop frontend || true
+            docker rm frontend || true
+            docker run -d -p 80:80 --name frontend $IMAGE_FRONTEND:latest
