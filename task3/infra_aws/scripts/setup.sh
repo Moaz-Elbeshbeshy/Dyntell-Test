@@ -23,19 +23,37 @@ sudo systemctl enable docker
 # Add ec2-user to the docker group so you can run docker without sudo
 sudo usermod -aG docker ec2-user
 
-# Install K3s (lightweight Kubernetes) with SELinux disabled
+# Install K3s (skip selinux-related dependencies)
 if ! command -v k3s &> /dev/null; then
   echo "Installing K3s..."
-  curl -sfL https://get.k3s.io | INSTALL_K3S_SELINUX_SUPPORT=false sh -
+  curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_SELINUX_RPM=true sh -
 fi
 
-# Alias kubectl to k3s kubectl for ease of use
-echo "alias kubectl='k3s kubectl'" >> /home/ec2-user/.bashrc
+# Create systemd drop-in directory for k3s service override
+sudo mkdir -p /etc/systemd/system/k3s.service.d
 
-# Export kubeconfig so GitHub Actions can use it over SSH if needed
+# Create systemd drop-in override file to set environment variable
+sudo tee /etc/systemd/system/k3s.service.d/override.conf > /dev/null <<EOF
+[Service]
+Environment="K3S_KUBECONFIG_MODE=644"
+EOF
+
+# Reload systemd manager configuration and restart k3s so override takes effect
+sudo systemctl daemon-reload
+sudo systemctl restart k3s
+
+# Symlink k3s to /usr/bin so it's in the PATH for all users
+sudo ln -sf /usr/local/bin/k3s /usr/bin/k3s
+
+# Symlink kubectl to /usr/bin as well
+sudo ln -sf /usr/local/bin/kubectl /usr/bin/kubectl
+
+# Set up kubeconfig for ec2-user
 mkdir -p /home/ec2-user/.kube
 sudo cp /etc/rancher/k3s/k3s.yaml /home/ec2-user/.kube/config
 sudo chown ec2-user:ec2-user /home/ec2-user/.kube/config
 
-# Log success
-echo "✔️ Docker + K3s installed." >> /var/log/setup.log
+# Add kubectl alias to ec2-user's bashrc
+echo "alias kubectl='k3s kubectl'" >> /home/ec2-user/.bashrc
+
+echo "✔️ Docker + K3s installed and configured."
