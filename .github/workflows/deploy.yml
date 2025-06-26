@@ -52,13 +52,13 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull $IMAGE_BACKEND:latest
-            docker pull $IMAGE_FRONTEND:latest
+            docker pull ${{ env.IMAGE_BACKEND }}:latest
+            docker pull ${{ env.IMAGE_FRONTEND }}:latest
 
             docker stop backend || true
             docker rm backend || true
-            docker run -d -p 3000:3000 --name backend $IMAGE_BACKEND:latest
+            docker run -d -p 3000:3000 --name backend ${{ env.IMAGE_BACKEND }}:latest
 
             docker stop frontend || true
             docker rm frontend || true
-            docker run -d -p 80:80 --name frontend $IMAGE_FRONTEND:latest
+            docker run -d -p 80:80 --name frontend ${{ env.IMAGE_FRONTEND }}:latest
