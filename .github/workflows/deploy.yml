@@ -36,13 +36,13 @@ jobs:
       # Build & push backend image
       - name: Build and push backend image
         run: |
-          docker build -t $IMAGE_BACKEND:latest ./backend
+          docker build -t $IMAGE_BACKEND:latest ./task3/backend
           docker push $IMAGE_BACKEND:latest
 
       # Build & push frontend image
       - name: Build and push frontend image
         run: |
-          docker build -t $IMAGE_FRONTEND:latest ./frontend
+          docker build -t $IMAGE_FRONTEND:latest ./task3/frontend
           docker push $IMAGE_FRONTEND:latest
 
       - name: Deploy to EC2
