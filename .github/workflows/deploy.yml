@@ -33,14 +33,28 @@ jobs:
           username: moaz-elbeshbeshy
           password: ${{ secrets.GHCR_PAT }}
 
+      # Chech if backend code changed
+      - name: Check if backend code changed
+        id: backend-changed
+        run: |
+          echo "changed=$(git diff --quiet HEAD^ HEAD ./task3/backend || echo true)" >> $GITHUB_OUTPUT
+
       # Build & push backend image
       - name: Build and push backend image
+        if: steps.backend-changed.outputs.changed == 'true'
         run: |
           docker build -t $IMAGE_BACKEND:latest ./task3/backend
           docker push $IMAGE_BACKEND:latest
 
+      # Chech if frontend code changed
+      - name: Check if frontend code changed
+        id: frontend-changed
+        run: |
+          echo "changed=$(git diff --quiet HEAD^ HEAD ./task3/frontend || echo true)" >> $GITHUB_OUTPUT
+
       # Build & push frontend image
       - name: Build and push frontend image
+        if: steps.frontend-changed.outputs.changed == 'true'
         run: |
           docker build -t $IMAGE_FRONTEND:latest ./task3/frontend
           docker push $IMAGE_FRONTEND:latest
