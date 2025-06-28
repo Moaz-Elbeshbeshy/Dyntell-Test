@@ -1,24 +1,33 @@
-# Use official Python image
-FROM python:3.13-slim
+# ---------- Build Stage ----------
+FROM python:3.13-slim as build
 
-# Set working directory
 WORKDIR /app
 
-# Copy requirements and install
-COPY requirements.txt ./
+# Install build dependencies if needed
 
-# Install dependencies globally in the container
+
+# Copy requirements first for better cache
+COPY requirements.txt ./
 RUN pip install  --upgrade pip && \
-    pip install -r requirements.txt
+    pip install --prefix=/install -r requirements.txt
 
 # Copy app code
 COPY . .
+
+# ---------- Final Stage ----------
+FROM python:3.13-slim
+
+WORKDIR /app
+
+# Copy only installed packages from build stage
+COPY --from=build /install /usr/local
+COPY --from=build /app /app
 
 # Set environment variables for Flask
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_RUN_PORT=3000
-ENV FLASK_ENV=development
+ENV FLASK_ENV=production
 
 # Expose port
 EXPOSE 3000

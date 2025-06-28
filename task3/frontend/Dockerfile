@@ -1,5 +1,5 @@
 # ---------- Build Stage ----------
-    FROM node:22 as build
+    FROM node:22.3-alpine as build
     WORKDIR /app
     
     # Copy package files first (better caching)
