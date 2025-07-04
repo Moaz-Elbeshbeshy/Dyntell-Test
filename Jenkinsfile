@@ -32,13 +32,12 @@ pipeline {
 
         stage('Login to GHCR') {
             steps {
-                withCredentials([string(credentialsId: 'GITHUB_PAT', variable: 'GITHUB_PAT')]) {
-                sh '''
-                    echo "Logging in to GHCR..."
-                    echo "$GITHUB_PAT" | docker login ghcr.io -u moaz-elbeshbeshy --password-stdin
-                    docker info
-                '''
+                withCredentials([usernamePassword(credentialsId: 'GITHUB_PAT', usernameVariable: 'GH_USER', passwordVariable: 'GH_PAT')]) {
+                    sh '''
+                        echo "$GH_PAT" | docker login ghcr.io -u "$GH_USER" --password-stdin
+                    '''
                 }
+
             }
         }
         
