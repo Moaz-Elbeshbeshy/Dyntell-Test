@@ -4,8 +4,7 @@ pipeline {
     environment {
         BACKEND_IMAGE = "ghcr.io/moaz-elbeshbeshy/dyntell-test/backend:latest"
         FRONTEND_IMAGE = "ghcr.io/moaz-elbeshbeshy/dyntell-test/frontend:latest"
-        GITHUB_PAT = credentials('GITHUB_PAT')
-        // GITHUB_USER = 'Moaz-Elbeshbeshy' //// This will expect your PAT to be stored in jenkins as secret text not username and password
+        GITHUB_USER = 'Moaz-Elbeshbeshy' 
         DOCKER_BUILDKIT = "1"
     }
 
@@ -16,19 +15,6 @@ pipeline {
                 checkout scm
             }
         }
-
-        stage('Debug PAT') {
-                steps {
-                    withEnv(["GITHUB_PAT=${env.GITHUB_PAT}"]) {
-                        sh '''
-                            echo "----- DEBUG GITHUB_PAT -----"
-                            echo "Length of PAT: $(echo -n $GITHUB_PAT | wc -c)"
-                            echo "Base64 of PAT (first 20 chars): $(echo -n $GITHUB_PAT | base64 | head -c 20)..."
-                            echo "----- END DEBUG -----"
-                        '''
-                    }
-                }
-            }
 
         stage('Login to GHCR') {
             steps {
