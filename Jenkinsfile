@@ -17,12 +17,26 @@ pipeline {
             }
         }
 
+        stage('Debug PAT') {
+                steps {
+                    withEnv(["GITHUB_PAT=${env.GITHUB_PAT}"]) {
+                        sh '''
+                            echo "----- DEBUG GITHUB_PAT -----"
+                            echo "Length of PAT: $(echo -n $GITHUB_PAT | wc -c)"
+                            echo "Base64 of PAT (first 20 chars): $(echo -n $GITHUB_PAT | base64 | head -c 20)..."
+                            echo "----- END DEBUG -----"
+                        '''
+                    }
+                }
+            }
+
         stage('Login to GHCR'){
             steps {
-                sh """
-                echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USER --password-stdin 
-                """
-                //what the fuck was that command?
+                withEnv(["GITHUB_PAT=${env.GITHUB_PAT}", "GITHUB_USER=${env.GITHUB_USER}"]) {
+                    sh '''
+                        echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USER --password-stdin
+                    '''
+                }
             }
         }
         
