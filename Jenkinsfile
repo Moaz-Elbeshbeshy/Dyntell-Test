@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        BACKEND_IMAGE = "ghcr.io/moaz-elbeshbeshy/Dyntell-Test/backend:latest"
-        FRONTEND_IMAGE = "ghcr.io/moaz-elbeshbeshy/Dyntell-Test/frontend:latest"
+        BACKEND_IMAGE = "ghcr.io/moaz-elbeshbeshy/dyntell-test/backend:latest"
+        FRONTEND_IMAGE = "ghcr.io/moaz-elbeshbeshy/dyntell-test/frontend:latest"
         GITHUB_PAT = credentials('GITHUB_PAT')
         GITHUB_USER = 'Moaz-Elbeshbeshy'
         DOCKER_BUILDKIT = "1"
