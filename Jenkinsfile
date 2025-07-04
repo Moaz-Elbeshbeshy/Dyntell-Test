@@ -5,7 +5,7 @@ pipeline {
         BACKEND_IMAGE = "ghcr.io/moaz-elbeshbeshy/Dyntell-Test/backend:latest"
         FRONTEND_IMAGE = "ghcr.io/moaz-elbeshbeshy/Dyntell-Test/frontend:latest"
         GITHUB_PAT = credentials('GITHUB_PAT')
-        GITHUB_USER = 'moaz-elbeshbeshy'
+        GITHUB_USER = 'Moaz-Elbeshbeshy'
         DOCKER_BUILDKIT = "1"
     }
 
@@ -30,12 +30,14 @@ pipeline {
                 }
             }
 
-        stage('Login to GHCR'){
+        stage('Login to GHCR') {
             steps {
-                withEnv(["GITHUB_PAT=${env.GITHUB_PAT}", "GITHUB_USER=${env.GITHUB_USER}"]) {
-                    sh '''
-                        echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USER --password-stdin
-                    '''
+                withCredentials([string(credentialsId: 'GITHUB_PAT', variable: 'GITHUB_PAT')]) {
+                sh '''
+                    echo "Logging in to GHCR..."
+                    echo "$GITHUB_PAT" | docker login ghcr.io -u moaz-elbeshbeshy --password-stdin
+                    docker info
+                '''
                 }
             }
         }
