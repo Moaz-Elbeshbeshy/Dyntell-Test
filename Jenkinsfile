@@ -65,18 +65,23 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh """
-                docker pull $BACKEND_IMAGE
-                docker stop backend || true
-                docker rm backend || true
-                docker run -d --name backend -p 5000:5000 $BACKEND_IMAGE
+                withCredentials([string(credentialsId: 'SQLALCHEMY_DB_URI', variable: 'DB_URI')]) {
+                    sh """
+                    docker pull $BACKEND_IMAGE
+                    docker stop backend || true
+                    docker rm backend || true
+                    docker run -d --name backend -p 5000:5000 \
+                        -e DATABASE_URI="$DB_URI" \
+                        $BACKEND_IMAGE
 
-                docker pull $FRONTEND_IMAGE
-                docker stop frontend || true
-                docker rm frontend || true
-                docker run -d --name frontend -p 80:80 $FRONTEND_IMAGE
-                """
+                    docker pull $FRONTEND_IMAGE
+                    docker stop frontend || true
+                    docker rm frontend || true
+                    docker run -d --name frontend -p 80:80 $FRONTEND_IMAGE
+                    """
+                }
             }
         }
+
     }
 }
