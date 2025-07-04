@@ -31,7 +31,9 @@ pipeline {
             steps {
                 dir('backend') {
                     sh """
-                        docker buildx build --platform linux/amd64 --no-cache --progress=plain \
+                        docker buildx build --platform linux/amd64 \
+                        --cache-from=type=registry,ref=$BACKEND_IMAGE-cache \
+                        --cache-to=type=registry,ref=$BACKEND_IMAGE-cache,mode=max \
                         --tag $BACKEND_IMAGE --push .
                     """
                 }
@@ -42,12 +44,15 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh """
-                        docker buildx build --platform linux/amd64 --no-cache --progress=plain \
+                        docker buildx build --platform linux/amd64 \
+                        --cache-from=type=registry,ref=$FRONTEND_IMAGE-cache \
+                        --cache-to=type=registry,ref=$FRONTEND_IMAGE-cache,mode=max \
                         --tag $FRONTEND_IMAGE --push .
                     """
                 }
             }
         }
+
 
         stage('Deploy') {
             steps {
