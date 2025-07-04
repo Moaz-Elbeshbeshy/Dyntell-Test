@@ -1,92 +1,15 @@
-name: Build & Push Docker Images to GHCR
+name: Deploy with Jenkins
 
 on:
   push:
-    branches: [main]
-    paths:
-      - "task3/backend/**"
-      - "task3/frontend/**"
-      - ".github/workflows/deploy.yml"
-  workflow_dispatch:
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_BACKEND: ghcr.io/moaz-elbeshbeshy/task-manager-backend
-  IMAGE_FRONTEND: ghcr.io/moaz-elbeshbeshy/task-manager-frontend
+    branches:
+      - ts
 
 jobs:
-  build-and-push:
+  trigger-jenkins:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Authenticate to GHCR
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: moaz-elbeshbeshy
-          password: ${{ secrets.GHCR_PAT }}
-
-      # Chech if backend code changed
-      - name: Check if backend code changed
-        id: backend-changed
+      - name: Trigger Jenkins via webhook
         run: |
-          echo "changed=$(git diff --quiet HEAD^ HEAD ./task3/backend || echo true)" >> $GITHUB_OUTPUT
-
-      # Build & push backend image
-      - name: Build and push backend image
-        if: steps.backend-changed.outputs.changed == 'true'
-        run: |
-          docker build -t $IMAGE_BACKEND:latest ./task3/backend
-          docker push $IMAGE_BACKEND:latest
-
-      # Chech if frontend code changed
-      - name: Check if frontend code changed
-        id: frontend-changed
-        run: |
-          echo "changed=$(git diff --quiet HEAD^ HEAD ./task3/frontend || echo true)" >> $GITHUB_OUTPUT
-
-      # Build & push frontend image
-      - name: Build and push frontend image
-        if: steps.frontend-changed.outputs.changed == 'true'
-        run: |
-          docker build -t $IMAGE_FRONTEND:latest ./task3/frontend
-          docker push $IMAGE_FRONTEND:latest
-
-      - name: Ensure k8s_manifests folder exists
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: mkdir -p ~/task3/k8s_manifests
-
-      - name: Copy Kubernetes manifests to EC2
-        uses: appleboy/scp-action@v0.1.5
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "task3/k8s_manifests"
-          target: "~/task3/k8s_manifests"
-          strip_components: 2
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            sudo systemctl restart k3s || true
-
-            /usr/local/bin/k3s kubectl apply -f ~/task3/k8s_manifests/backend-deployment.yml
-            /usr/local/bin/k3s kubectl apply -f ~/task3/k8s_manifests/frontend-deployment.yml
-
-            /usr/local/bin/k3s kubectl rollout status deployment/backend
-            /usr/local/bin/k3s kubectl rollout status deployment/frontend
+          curl -X POST "${{ secrets.JENKINS_URL }}/github-webhook/" || true

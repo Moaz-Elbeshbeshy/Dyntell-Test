@@ -7,7 +7,57 @@ __pycache__/
 *.log
 .git
 .gitignore
+.dockerignore
 Dockerfile
 README.md
 tests/
 *.md
+# Node modules - huge folder, always ignore
+node_modules
+**/node_modules
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output - avoid copying old build files to the image
+dist
+build
+
+# Environment files (you usually don't want to copy .env into the image)
+.env
+.env.local
+.env.*.local
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.vscode
+.idea
+*.sublime-project
+*.sublime-workspace
+
+# TypeScript build outputs (in case they exist)
+*.tsbuildinfo
+
+# Testing coverage and reports
+coverage
+*.lcov
+
+# Misc cache files
+.cache
+*.tmp
+*.temp
+
+# Git files, you don't need .git inside the image
+.git
+.gitignore
+
+# Misc config files that won't be needed in image
+eslint.config.js
+*.config.js
+*.config.ts

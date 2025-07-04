@@ -75,7 +75,7 @@ coverage.xml
 
 # mypy cache
 .mypy_cache/
-
+.venv
 # Cython debug symbols
 cython_debug/
 
