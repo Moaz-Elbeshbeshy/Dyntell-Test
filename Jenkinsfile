@@ -5,7 +5,7 @@ pipeline {
         BACKEND_IMAGE = "ghcr.io/moaz-elbeshbeshy/dyntell-test/backend:latest"
         FRONTEND_IMAGE = "ghcr.io/moaz-elbeshbeshy/dyntell-test/frontend:latest"
         GITHUB_PAT = credentials('GITHUB_PAT')
-        GITHUB_USER = 'Moaz-Elbeshbeshy'
+        // GITHUB_USER = 'Moaz-Elbeshbeshy' //// This will expect your PAT to be stored in jenkins as secret text not username and password
         DOCKER_BUILDKIT = "1"
     }
 
@@ -45,9 +45,7 @@ pipeline {
             steps {
                 dir('backend') {
                     sh """
-                        docker buildx build --progress=plain \
-                        --cache-from=type=registry,ref=$BACKEND_IMAGE \
-                        --cache-to=type=registry,ref=$BACKEND_IMAGE,mode=max \
+                        docker buildx build --platform linux/amd64 --no-cache --progress=plain \
                         --tag $BACKEND_IMAGE --push .
                     """
                 }
@@ -58,10 +56,8 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh """
-                        docker buildx build --progress=plain \
-                        --cache-from=type=registry,ref=$FRONTEND_IMAGE \
-                        --cache-to=type=registry,ref=$FRONTEND_IMAGE,mode=max \
-                       --tag $FRONTEND_IMAGE --push .
+                        docker buildx build --platform linux/amd64 --no-cache --progress=plain \
+                        --tag $FRONTEND_IMAGE --push .
                     """
                 }
             }
