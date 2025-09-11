@@ -13,20 +13,20 @@ def get_task_by_id(id):
     return {"task": task.to_dict()}, 200
 
 
-def create_task(title, status="pending"):
+def create_task(title, status="pending", urgency=0):
     if not title:
         return {"error": "Title is required"}, 400
 
     if status not in Task.ALLOWED_STATUSES:
         return {"error": f"Status must be one of {list(Task.ALLOWED_STATUSES)}"}, 400
 
-    task = Task(title=title, status=status)
+    task = Task(title=title, status=status, urgency=urgency)
     db.session.add(task)
     db.session.commit()
     return task.to_dict(), 201
 
 
-def update_task(id, title, status):
+def update_task(id, title, status, urgency=0):
     task = Task.query.get(id)
     if not task:
         return {"error": "Task not found"}, 404
@@ -36,6 +36,7 @@ def update_task(id, title, status):
         return {"error": f"Status must be one of {list(Task.ALLOWED_STATUSES)}"}, 400
     task.title = title
     task.status = status if status else task.status
+    task.urgency = urgency if urgency else task.urgency
     db.session.commit()
     return task.to_dict(), 200
 
