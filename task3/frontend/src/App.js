@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-8">
       <div className="w-full max-w-2xl bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Task Management App</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Task Tracker App</h1>
         <TaskForm onTaskAdded={refreshTasks} />
         <TaskList refreshKey={refreshKey} />
       </div>
