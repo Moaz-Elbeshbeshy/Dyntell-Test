@@ -13,14 +13,14 @@ def get_task_by_id(id):
     return {"task": task.to_dict()}, 200
 
 
-def create_task(title, status="pending"):
+def create_task(title, status="pending", urgency=0):
     if not title:
         return {"error": "Title is required"}, 400
 
     if status not in Task.ALLOWED_STATUSES:
         return {"error": f"Status must be one of {list(Task.ALLOWED_STATUSES)}"}, 400
 
-    task = Task(title=title, status=status)
+    task = Task(title=title, status=status, urgency=urgency)
     db.session.add(task)
     db.session.commit()
     return task.to_dict(), 201
