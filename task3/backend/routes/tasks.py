@@ -21,7 +21,8 @@ def create_task_route():
     data = request.get_json()
     title = data.get("title")
     status = data.get("status", "pending")  # default to pending if missing
-    task, status_code = create_task(title, status)
+    urgency = data.get("urgency", 0)
+    task, status_code = create_task(title, status, urgency)
     return jsonify(task), status_code
 
 
@@ -36,7 +37,8 @@ def update_task_route(id):
     data = request.get_json()
     title = data.get("title")
     status = data.get("status")
-    task, status_code = update_task(id, title, status)
+    urgency = data.get("urgency", 0)
+    task, status_code = update_task(id, title, status, urgency)
     return jsonify(task), status_code
 
 
