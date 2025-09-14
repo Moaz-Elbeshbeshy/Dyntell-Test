@@ -14,5 +14,6 @@ app.register_blueprint(tasks_bp, url_prefix="/api/v1/tasks")
 with app.app_context():
     db.create_all()
 
+# Switch debug to True for development
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000, debug=True)
