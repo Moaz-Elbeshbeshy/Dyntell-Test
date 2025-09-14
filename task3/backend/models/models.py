@@ -5,7 +5,7 @@ db = SQLAlchemy()
 
 
 class Task(db.Model):
-
+    # allowed statuses
     ALLOWED_STATUSES = ["pending", "completed"]
 
     id = db.Column(db.Integer, primary_key=True)
